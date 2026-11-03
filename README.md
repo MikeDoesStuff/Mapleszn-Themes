@@ -18,6 +18,20 @@ Dark and light maple-season themes for [t3code](https://github.com/pingdotgg/t3c
 
 Import any file from [`themes/`](themes) into t3code's theme settings. Each file has a dark base and a `light` variant, so the theme follows t3code's light, dark or system appearance setting.
 
+## VS Code and Open VSX
+
+`vscode/` holds a VS Code theme extension built from the same files, with matching syntax colours. Install the `.vsix` file:
+
+- **t3code:** import the `.vsix` in theme settings. Each Dark/Light pair becomes one theme.
+- **VS Code / Cursor:** run **Extensions: Install from VSIX…**.
+
+To rebuild after editing `themes/`:
+
+```sh
+python3 scripts/build_vscode.py
+cd vscode && npx @vscode/vsce@3.2.1 package
+```
+
 ## Preview
 
 [Open the live preview](https://mikedoesstuff.github.io/Mapleszn-Themes/) to click through every theme in a mock t3code window, with contrast ratios for the fixed syntax colours.

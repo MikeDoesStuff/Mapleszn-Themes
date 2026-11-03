@@ -1,0 +1,131 @@
+{
+  "name": "mapleszn-themes",
+  "displayName": "Mapleszn",
+  "description": "Maple-season dark and light themes: warm leaf accents on cool grey bases. Made for t3code, works in VS Code.",
+  "version": "0.1.0",
+  "publisher": "mikedoesstuff",
+  "author": {
+    "name": "MikeDoesStuff"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MikeDoesStuff/Mapleszn-Themes"
+  },
+  "homepage": "https://github.com/MikeDoesStuff/Mapleszn-Themes",
+  "bugs": {
+    "url": "https://github.com/MikeDoesStuff/Mapleszn-Themes/issues"
+  },
+  "engines": {
+    "vscode": "^1.70.0"
+  },
+  "categories": [
+    "Themes"
+  ],
+  "keywords": [
+    "theme",
+    "maple",
+    "autumn",
+    "dark",
+    "light",
+    "t3code"
+  ],
+  "galleryBanner": {
+    "color": "#2B323B",
+    "theme": "dark"
+  },
+  "contributes": {
+    "themes": [
+      {
+        "label": "Maple Frost Dark",
+        "uiTheme": "vs-dark",
+        "path": "./themes/maple-frost-dark.json"
+      },
+      {
+        "label": "Maple Frost Light",
+        "uiTheme": "vs",
+        "path": "./themes/maple-frost-light.json"
+      },
+      {
+        "label": "Maple Momiji Dark",
+        "uiTheme": "vs-dark",
+        "path": "./themes/maple-momiji-dark.json"
+      },
+      {
+        "label": "Maple Momiji Light",
+        "uiTheme": "vs",
+        "path": "./themes/maple-momiji-light.json"
+      },
+      {
+        "label": "Maple Dusk Dark",
+        "uiTheme": "vs-dark",
+        "path": "./themes/maple-dusk-dark.json"
+      },
+      {
+        "label": "Maple Dusk Light",
+        "uiTheme": "vs",
+        "path": "./themes/maple-dusk-light.json"
+      },
+      {
+        "label": "Maple Sugar Dark",
+        "uiTheme": "vs-dark",
+        "path": "./themes/maple-sugar-dark.json"
+      },
+      {
+        "label": "Maple Sugar Light",
+        "uiTheme": "vs",
+        "path": "./themes/maple-sugar-light.json"
+      },
+      {
+        "label": "Maple Ember Dark",
+        "uiTheme": "vs-dark",
+        "path": "./themes/maple-ember-dark.json"
+      },
+      {
+        "label": "Maple Ember Light",
+        "uiTheme": "vs",
+        "path": "./themes/maple-ember-light.json"
+      },
+      {
+        "label": "Maple Cinder Dark",
+        "uiTheme": "vs-dark",
+        "path": "./themes/maple-cinder-dark.json"
+      },
+      {
+        "label": "Maple Cinder Light",
+        "uiTheme": "vs",
+        "path": "./themes/maple-cinder-light.json"
+      },
+      {
+        "label": "Maple Oat Dark",
+        "uiTheme": "vs-dark",
+        "path": "./themes/maple-oat-dark.json"
+      },
+      {
+        "label": "Maple Oat Light",
+        "uiTheme": "vs",
+        "path": "./themes/maple-oat-light.json"
+      },
+      {
+        "label": "Maple Mist Dark",
+        "uiTheme": "vs-dark",
+        "path": "./themes/maple-mist-dark.json"
+      },
+      {
+        "label": "Maple Mist Light",
+        "uiTheme": "vs",
+        "path": "./themes/maple-mist-light.json"
+      },
+      {
+        "label": "Maple Twilight Dark",
+        "uiTheme": "vs-dark",
+        "path": "./themes/maple-twilight-dark.json"
+      },
+      {
+        "label": "Maple Twilight Light",
+        "uiTheme": "vs",
+        "path": "./themes/maple-twilight-light.json"
+      }
+    ]
+  }
+}
