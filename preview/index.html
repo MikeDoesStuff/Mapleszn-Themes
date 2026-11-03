@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Maple Theme Lab</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: page chrome in neutral ink; each mock window is painted entirely by the selected theme's tokens. */
+:root{
+  color-scheme:dark;
+  --page:#1F2124; --page-fg:#E6E3DF; --page-muted:#A7A3A0; --page-line:#3A3D42; --page-chip:#2A2D31;
+  --display:"Fraunces",Georgia,serif; --body:"IBM Plex Sans",system-ui,sans-serif; --mono:"JetBrains Mono","Maple Mono",ui-monospace,monospace;
+  /* fixed syntax colours (approximation of t3code's One Dark–style highlighter in the screenshot) */
+  --sx-kw:#E06C75; --sx-fn:#C678DD; --sx-var:#E5A16B; --sx-type:#E5C07B; --sx-str:#98C379; --sx-punc:#ABB2BF; --sx-cmt:#7F848E; --sx-prop:#E06C75; --sx-blue:#61AFEF; --sx-cyan:#56B6C2; --sx-green:#3FC27A; --sx-yellow:#E5C07B; --sx-red:#E06C75;
+}
+body{background:var(--page);color:var(--page-fg);font:14px/1.55 var(--body)}
+.wrap{max-width:1180px;margin:0 auto;padding-block:28px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:28px}
+h1{font:600 clamp(26px,4vw,36px)/1.1 var(--display);margin:0;text-wrap:balance;letter-spacing:-.01em}
+.lede{color:var(--page-muted);max-width:68ch;margin:6px 0 0}
+.label{font:600 11px/1 var(--body);letter-spacing:.09em;text-transform:uppercase;color:var(--page-muted)}
+.picker{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.pick{all:unset;cursor:pointer;display:grid;gap:8px;padding:10px;border-radius:10px;border:1px solid var(--page-line);background:var(--page-chip)}
+.pick:focus-visible{outline:2px solid var(--page-fg);outline-offset:2px}
+.pick[aria-pressed="true"]{border-color:var(--sel)}
+.pick .row{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.pick b{font:600 14px var(--body)}
+.tag{font:500 10px var(--body);letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:4px;background:#ffffff10;color:var(--page-muted)}
+.tag.new{background:#E4A18B26;color:#F0B9A5}
+.strip{display:flex;height:22px;border-radius:5px;overflow:hidden}
+.strip span{flex:1}
+.strip span.acc{flex:1.6}
+.group-head{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+
+/* ---- mock t3code window ---- */
+.win{border-radius:12px;overflow:hidden;border:1px solid var(--t-border);background:var(--t-canvas);color:var(--t-text);display:grid;grid-template-columns:220px minmax(0,1fr);font:13px/1.5 var(--body);box-shadow:0 20px 50px #0006}
+.side{background:var(--t-sidebar);border-right:1px solid var(--t-sidebarBorder);padding:12px 8px;display:grid;align-content:start;gap:2px;color:var(--t-sidebarForeground)}
+.side .sec{color:var(--t-sidebarMutedForeground);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:10px 8px 4px}
+.side .it{padding:6px 8px;border-radius:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.side .it.hov{background:var(--t-sidebarRowHover)} .side .it.act{background:var(--t-sidebarRowActive)} .side .it.sel{background:var(--t-sidebarRowSelected)}
+.side .search{background:var(--t-sidebarControlSurface);color:var(--t-sidebarMutedForeground);border-radius:6px;padding:6px 8px;margin-bottom:6px}
+.main{display:grid;grid-template-rows:auto 1fr;min-width:0}
+.bar{background:var(--t-toolbar);color:var(--t-toolbarForeground);border-bottom:1px solid var(--t-toolbarBorder);display:flex;gap:8px;align-items:center;padding:8px 12px;flex-wrap:wrap}
+.bar .ctl{background:var(--t-toolbarControl);color:var(--t-toolbarControlForeground);border-radius:6px;padding:3px 10px;font-size:12px}
+.bar .ctl.hov{background:var(--t-toolbarControlHover)}
+.bar .sp{flex:1}
+.body{padding:16px;display:grid;gap:14px;min-width:0}
+.msg{background:var(--t-messageSurface);color:var(--t-messageForeground);border-radius:10px;padding:10px 12px;justify-self:end;max-width:80%}
+.reply{display:grid;gap:10px;min-width:0}
+.reply p{margin:0} .muted{color:var(--t-textMuted)}
+.code{background:var(--t-codeBackground);border:1px solid var(--t-border);border-radius:8px;overflow:hidden;font:12.5px/1.6 var(--mono);color:var(--t-codeForeground)}
+.code .hd{display:flex;justify-content:space-between;padding:6px 10px;border-bottom:1px solid var(--t-border);font-family:var(--body);font-size:12px;background:var(--t-surface)}
+.code pre{margin:0;padding:6px 0;overflow-x:auto}
+.ln{display:block;padding:0 10px;white-space:pre}
+.ln i{font-style:normal;display:inline-block;width:2ch;color:var(--t-textMuted);opacity:.7;margin-right:12px;text-align:right}
+.ln.del{background:#E06C7533;box-shadow:inset 3px 0 #E06C75} .ln.add{background:#3FC27A2E;box-shadow:inset 3px 0 #3FC27A}
+.term{background:var(--t-terminalBackground);color:var(--t-terminalForeground);border:1px solid var(--t-border);border-radius:8px;padding:10px 12px;font:12.5px/1.65 var(--mono);overflow-x:auto;white-space:pre}
+.cursor{background:var(--t-terminalCursor);color:var(--t-terminalBackground)}
+.selx{background:var(--t-terminalSelection)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border-radius:6px;padding:4px 10px;font-size:12px}
+.c-err{background:var(--t-errorSurface);color:var(--t-errorForeground)} .c-warn{background:var(--t-warningSurface);color:var(--t-warningForeground)} .c-upd{background:var(--t-updateSurface);color:var(--t-updateForeground)} .c-acc{background:var(--t-accentSurface);color:var(--t-accentSurfaceForeground)}
+.compose{display:flex;gap:8px;align-items:center;background:var(--t-surfaceRaised);border:1px solid var(--t-border);border-radius:10px;padding:8px}
+.compose .in{flex:1;background:var(--t-input);border-radius:6px;padding:6px 10px;color:var(--t-placeholder);outline:2px solid var(--t-focus);outline-offset:-1px;min-width:0}
+.btn{background:var(--t-accent);color:var(--t-accentForeground);border-radius:6px;padding:6px 12px;font-weight:600;font-size:12px;white-space:nowrap}
+.btn2{background:var(--t-secondary);color:var(--t-secondaryForeground);border-radius:6px;padding:6px 12px;font-size:12px}
+.k{color:var(--sx-kw)}.f{color:var(--sx-fn)}.v{color:var(--sx-var)}.t{color:var(--sx-type)}.s{color:var(--sx-str)}.p{color:var(--sx-punc)}.cm{color:var(--sx-cmt);font-style:italic}.bl{color:var(--sx-blue)}.cy{color:var(--sx-cyan);text-decoration:underline}.gr{color:var(--sx-green)}.ye{color:var(--sx-yellow)}.re{color:var(--sx-red)}
+.ready{background:var(--sx-green);color:#10241a;padding:0 6px}
+
+.under{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:20px}
+.panel{border:1px solid var(--page-line);border-radius:10px;padding:14px;background:var(--page-chip);min-width:0;display:grid;gap:10px;align-content:start}
+.panel h3{margin:0;font:600 18px var(--display)}
+table{border-collapse:collapse;width:100%;font-size:12.5px;font-variant-numeric:tabular-nums}
+td,th{padding:5px 6px;border-bottom:1px solid var(--page-line);text-align:left}
+th{color:var(--page-muted);font-weight:500}
+.ok{color:#8FD19E}.meh{color:#E6C779}.bad{color:#EE9A90}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:6px;border:1px solid #ffffff22}
+.copy{all:unset;cursor:pointer;border:1px solid var(--page-line);border-radius:6px;padding:5px 10px;font-size:12px}
+.copy:focus-visible{outline:2px solid var(--page-fg)}
+textarea{width:100%;box-sizing:border-box;height:220px;background:#16181a;color:var(--page-fg);border:1px solid var(--page-line);border-radius:6px;font:11.5px/1.5 var(--mono);padding:8px;resize:vertical}
+.notes{margin:0;padding-left:18px;color:var(--page-muted)} .notes li{margin:4px 0} .notes b{color:var(--page-fg);font-weight:600}
+@media (max-width:820px){.win{grid-template-columns:1fr}.side{display:none}.under{grid-template-columns:1fr}.msg{max-width:100%}}
+@media (prefers-reduced-motion:no-preference){.win *{transition:background-color .25s,color .25s,border-color .25s}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="label">t3code · dark · Maple Mono NF</div>
+    <h1>Maple Theme Lab</h1>
+    <p class="lede">The five ChatGPT themes alongside four new ones. Pick a theme to repaint the mock app; syntax and diff colours stay fixed because t3code doesn't let a theme change them.</p>
+  </header>
+
+  <section style="display:grid;gap:10px">
+    <div class="group-head"><span class="label">Themes</span></div>
+    <div class="picker" id="picker"></div>
+  </section>
+
+  <div class="win" id="win">
+    <aside class="side">
+      <div class="search">Search threads…</div>
+      <div class="sec">t3code</div>
+      <div class="it sel">Fix formatUser output</div>
+      <div class="it hov">Vite config cleanup</div>
+      <div class="it">Add email to User type</div>
+      <div class="sec">credit-api</div>
+      <div class="it act">Refactor affordability check</div>
+      <div class="it">Flaky integration tests</div>
+    </aside>
+    <div class="main">
+      <div class="bar"><b>Fix formatUser output</b><span class="sp"></span><span class="ctl">main</span><span class="ctl hov">Diff</span><span class="ctl">Terminal</span></div>
+      <div class="body">
+        <div class="msg">Include the email in formatUser and stop upper-casing the name.</div>
+        <div class="reply">
+          <p>Updated <code>formatUser</code> to return a template string. <span class="muted">One file changed, tests pass.</span></p>
+          <div class="code">
+            <div class="hd"><span>src/formatUser.ts</span><span><span class="re">−1</span> <span class="gr">+1</span></span></div>
+<pre><span class="ln"><i>1</i><span class="k">export function</span> <span class="f">formatUser</span><span class="p">(</span><span class="v">user</span><span class="p">: </span><span class="t">User</span><span class="p">) {</span></span><span class="ln del"><i>2</i>  <span class="k">return</span> <span class="v">user</span><span class="p">.</span><span class="v">name</span><span class="p">.</span><span class="f">toUpperCase</span><span class="p">();</span></span><span class="ln add"><i>2</i>  <span class="k">return</span> <span class="s">`${</span><span class="v">user</span><span class="p">.</span><span class="v">name</span><span class="s">} &lt;${</span><span class="v">user</span><span class="p">.</span><span class="v">email</span><span class="s">}&gt;`</span><span class="p">;</span> <span class="cm">// 0O 1lI</span></span><span class="ln"><i>3</i><span class="p">}</span></span></pre>
+          </div>
+          <div class="term"><span class="gr">➜</span> <span class="bl">t3code</span> <span class="bl">git:(</span><span class="re">main</span><span class="bl">)</span> <span class="ye">✗</span> vpr dev
+
+  <span class="gr">VITE</span> <span class="gr">v7.1.1</span>  ready in <b>1.24s</b>
+
+  <span class="gr">➜</span>  Local:   <span class="cy">http://127.0.0.1:5173/</span>
+  <span class="gr">✓ 85 passed</span>   <span class="ye">⚠ 2 warnings</span>   <span class="re">✗ 0 failed</span>
+
+  <span class="ready">READY</span> <span class="selx">watching for changes</span>, press <b>q</b> to quit
+<span class="gr">➜</span> <span class="bl">t3code</span> <span class="bl">git:(</span><span class="re">main</span><span class="bl">)</span> <span class="ye">✗</span> <span class="cursor"> </span></div>
+          <div class="chips"><span class="chip c-acc">Accent surface</span><span class="chip c-err">Build failed</span><span class="chip c-warn">2 warnings</span><span class="chip c-upd">Update available</span></div>
+        </div>
+        <div class="compose"><div class="in">Ask for follow-up changes…</div><span class="btn2">Plan</span><span class="btn">Send</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="under">
+    <div class="panel">
+      <div class="group-head"><h3 id="tname"></h3><span class="muted" id="tdesc" style="color:var(--page-muted)"></span></div>
+      <div class="label">Fixed syntax colours on this theme's code background (WCAG ratio)</div>
+      <div style="overflow-x:auto"><table id="ctab"></table></div>
+    </div>
+    <div class="panel">
+      <div class="group-head" style="justify-content:space-between"><h3>Theme file</h3><button class="copy" id="copy" type="button">Copy JSON</button></div>
+      <textarea id="json" readonly spellcheck="false" aria-label="Theme JSON"></textarea>
+    </div>
+  </div>
+
+  <section class="panel">
+    <h3>How the new ones were built</h3>
+    <ul class="notes">
+      <li><b>Neutrals and accent are separate dials.</b> Each theme is a tinted neutral ramp (one hue, very low chroma, stepped in OKLCH lightness) plus one leaf-coloured accent, the same split Material's theme builder uses between its neutral and primary palettes.</li>
+      <li><b>Complementary pairs.</b> Frost and Sugar put a warm leaf accent on a cool blue-slate base. Blue and orange sit opposite each other, so the accent reads as maple without the background going brown.</li>
+      <li><b>Mist and Twilight kept, re-leafed.</b> Frost is Mist's base with a red maple accent; Dusk is Twilight's base with apricot instead of lavender.</li>
+      <li><b>Harmonised status colours.</b> Error, warning and update hues are nudged up to 15° toward the accent, like Material's harmonize(), so they belong to the palette.</li>
+      <li><b>Comments set the ceiling.</b> The fixed comment grey is the weakest syntax colour, so code backgrounds stay around OKLCH L 0.30–0.32. Going lighter would wash comments out.</li>
+    </ul>
+  </section>
+</div>
+<script>
+const THEMES={"maple-cinder": {"version": 1, "id": "maple-cinder", "name": "Maple Cinder", "appearance": "dark", "author": "Custom", "description": "Graphite-grey with soft terracotta and copper, an autumnal accent rather than a brown background.", "colors": {"canvas": "#36393D", "chrome": "#36393D", "toolbar": "#36393D", "toolbarForeground": "#E8E5E1", "toolbarBorder": "#5D6065", "toolbarControl": "#464A4E", "toolbarControlForeground": "#E8E5E1", "toolbarControlHover": "#51565A", "surface": "#3C4044", "surfaceRaised": "#464A4E", "surfaceOverlay": "#51565A", "text": "#E8E5E1", "textMuted": "#C1BAB6", "border": "#5D6065", "input": "#51565A", "focus": "#E4A18B", "accent": "#E4A18B", "accentForeground": "#322F30", "secondary": "#464A4E", "secondaryForeground": "#E8E5E1", "muted": "#3C4044", "mutedForeground": "#C1BAB6", "placeholder": "#C1BAB6", "secondaryLabel": "#C1BAB6", "iconMuted": "#C1BAB6", "error": "#E59A95", "errorForeground": "#F0B2AC", "errorSurface": "#583C42", "warning": "#E0C17C", "warningForeground": "#EAD096", "warningSurface": "#574541", "update": "#B8ACD7", "updateForeground": "#D3CAEC", "updateSurface": "#493E3D", "accentSurface": "#634A46", "accentSurfaceForeground": "#E8E5E1", "messageSurface": "#464A4E", "messageForeground": "#E8E5E1", "messageAction": "#E4A18B", "messageActionForeground": "#322F30", "messageActionHover": "#F1B7A4", "codeBackground": "#36393D", "codeForeground": "#E8E5E1", "sidebar": "#303337", "sidebarForeground": "#E8E5E1", "sidebarMutedForeground": "#C1BAB6", "sidebarControlSurface": "#3C4044", "sidebarRowHover": "#464A4E", "sidebarRowActive": "#51565A", "sidebarRowSelected": "#634A46", "sidebarBorder": "#5D6065", "terminalBackground": "#303438", "terminalForeground": "#E8E5E1", "terminalCursor": "#E4A18B", "terminalSelection": "#51565A", "terminalScrollbar": "#5D6065", "terminalScrollbarHover": "#51565A"}, "collection": {"id": "maple-theme-collection", "label": "Maple Theme Collection"}, "origin": "ChatGPT"}, "maple-ember": {"version": 1, "id": "maple-ember", "name": "Maple Ember", "appearance": "dark", "author": "Custom", "description": "Soft charcoal-slate dark theme with amber and copper accents, inspired by maple leaves without an overly brown or green palette.", "colors": {"canvas": "#30333B", "chrome": "#30333B", "toolbar": "#30333B", "toolbarForeground": "#E4DED5", "toolbarBorder": "#494C54", "toolbarControl": "#3D4049", "toolbarControlForeground": "#E4DED5", "toolbarControlHover": "#4B4E57", "surface": "#343740", "surfaceRaised": "#3D4049", "surfaceOverlay": "#454750", "text": "#E4DED5", "textMuted": "#B6B0AB", "border": "#50515A", "input": "#4A4B54", "focus": "#D8A778", "accent": "#D8A778", "accentForeground": "#2E3036", "secondary": "#41434C", "secondaryForeground": "#E4DED5", "muted": "#3E4049", "mutedForeground": "#B6B0AB", "placeholder": "#A9A6A8", "secondaryLabel": "#B6B0AB", "iconMuted": "#AAA7AA", "error": "#E18C82", "errorForeground": "#F0A49A", "errorSurface": "#513B40", "warning": "#E0BB78", "warningForeground": "#E8C88E", "warningSurface": "#4D453C", "update": "#C4A0CE", "updateForeground": "#DEC1E7", "updateSurface": "#46404D", "accentSurface": "#51443E", "accentSurfaceForeground": "#F2C59D", "messageSurface": "#393B44", "messageForeground": "#E4DED5", "messageAction": "#D8A778", "messageActionForeground": "#2E3036", "messageActionHover": "#E5B78D", "codeBackground": "#30333B", "codeForeground": "#E9E5DF", "sidebar": "#2C2F37", "sidebarForeground": "#E4DED5", "sidebarMutedForeground": "#B5AFAC", "sidebarControlSurface": "#393C45", "sidebarRowHover": "#3B3E47", "sidebarRowActive": "#46424A", "sidebarRowSelected": "#51464B", "sidebarBorder": "#484B54", "terminalBackground": "#2E3139", "terminalForeground": "#E5E1DB", "terminalCursor": "#EBC99C", "terminalSelection": "#50505D", "terminalScrollbar": "#50515A", "terminalScrollbarHover": "#686770"}, "collection": {"id": "maple-theme-collection", "label": "Maple Theme Collection"}, "origin": "ChatGPT"}, "maple-oat": {"version": 1, "id": "maple-oat", "name": "Maple Oat", "appearance": "dark", "author": "Custom", "description": "Soft warm greige-grey and pale honey accents, without turning brown.", "colors": {"canvas": "#393936", "chrome": "#393936", "toolbar": "#393936", "toolbarForeground": "#EAE5DB", "toolbarBorder": "#606059", "toolbarControl": "#474842", "toolbarControlForeground": "#EAE5DB", "toolbarControlHover": "#51524B", "surface": "#3F403C", "surfaceRaised": "#474842", "surfaceOverlay": "#51524B", "text": "#EAE5DB", "textMuted": "#C4BDB2", "border": "#606059", "input": "#51524B", "focus": "#DBBC91", "accent": "#DBBC91", "accentForeground": "#302F2B", "secondary": "#474842", "secondaryForeground": "#EAE5DB", "muted": "#3F403C", "mutedForeground": "#C4BDB2", "placeholder": "#C4BDB2", "secondaryLabel": "#C4BDB2", "iconMuted": "#C4BDB2", "error": "#E59A95", "errorForeground": "#F0B2AC", "errorSurface": "#583C42", "warning": "#E0C17C", "warningForeground": "#EAD096", "warningSurface": "#53483F", "update": "#B8ACD7", "updateForeground": "#D3CAEC", "updateSurface": "#454039", "accentSurface": "#5B5045", "accentSurfaceForeground": "#EAE5DB", "messageSurface": "#474842", "messageForeground": "#EAE5DB", "messageAction": "#DBBC91", "messageActionForeground": "#302F2B", "messageActionHover": "#EBD0AB", "codeBackground": "#393936", "codeForeground": "#EAE5DB", "sidebar": "#333430", "sidebarForeground": "#EAE5DB", "sidebarMutedForeground": "#C4BDB2", "sidebarControlSurface": "#3F403C", "sidebarRowHover": "#474842", "sidebarRowActive": "#51524B", "sidebarRowSelected": "#5B5045", "sidebarBorder": "#606059", "terminalBackground": "#333431", "terminalForeground": "#EAE5DB", "terminalCursor": "#DBBC91", "terminalSelection": "#51524B", "terminalScrollbar": "#606059", "terminalScrollbarHover": "#51524B"}, "collection": {"id": "maple-theme-collection", "label": "Maple Theme Collection"}, "origin": "ChatGPT"}, "maple-mist": {"version": 1, "id": "maple-mist", "name": "Maple Mist", "appearance": "dark", "author": "Custom", "description": "Cool, airy blue-grey charcoal with subdued icy-blue accents.", "colors": {"canvas": "#343B46", "chrome": "#343B46", "toolbar": "#343B46", "toolbarForeground": "#E5EAF0", "toolbarBorder": "#56606C", "toolbarControl": "#424A56", "toolbarControlForeground": "#E5EAF0", "toolbarControlHover": "#4C5561", "surface": "#39414C", "surfaceRaised": "#424A56", "surfaceOverlay": "#4C5561", "text": "#E5EAF0", "textMuted": "#B7C1CB", "border": "#56606C", "input": "#4C5561", "focus": "#A9C7DE", "accent": "#A9C7DE", "accentForeground": "#25303B", "secondary": "#424A56", "secondaryForeground": "#E5EAF0", "muted": "#39414C", "mutedForeground": "#B7C1CB", "placeholder": "#B7C1CB", "secondaryLabel": "#B7C1CB", "iconMuted": "#B7C1CB", "error": "#E59A95", "errorForeground": "#F0B2AC", "errorSurface": "#583C42", "warning": "#E0C17C", "warningForeground": "#EAD096", "warningSurface": "#3B4A5D", "update": "#B8ACD7", "updateForeground": "#D3CAEC", "updateSurface": "#354354", "accentSurface": "#4C5D70", "accentSurfaceForeground": "#E5EAF0", "messageSurface": "#424A56", "messageForeground": "#E5EAF0", "messageAction": "#A9C7DE", "messageActionForeground": "#25303B", "messageActionHover": "#C0DAEE", "codeBackground": "#343B46", "codeForeground": "#E5EAF0", "sidebar": "#303742", "sidebarForeground": "#E5EAF0", "sidebarMutedForeground": "#B7C1CB", "sidebarControlSurface": "#39414C", "sidebarRowHover": "#424A56", "sidebarRowActive": "#4C5561", "sidebarRowSelected": "#4C5D70", "sidebarBorder": "#56606C", "terminalBackground": "#303742", "terminalForeground": "#E5EAF0", "terminalCursor": "#A9C7DE", "terminalSelection": "#4C5561", "terminalScrollbar": "#56606C", "terminalScrollbarHover": "#4C5561"}, "collection": {"id": "maple-theme-collection", "label": "Maple Theme Collection"}, "origin": "ChatGPT"}, "maple-twilight": {"version": 1, "id": "maple-twilight", "name": "Maple Twilight", "appearance": "dark", "author": "Custom", "description": "Smoky blue-plum charcoal with muted lavender and apricot highlights.", "colors": {"canvas": "#353540", "chrome": "#353540", "toolbar": "#353540", "toolbarForeground": "#E9E4EE", "toolbarBorder": "#5B5A68", "toolbarControl": "#454550", "toolbarControlForeground": "#E9E4EE", "toolbarControlHover": "#50505D", "surface": "#3C3C48", "surfaceRaised": "#454550", "surfaceOverlay": "#50505D", "text": "#E9E4EE", "textMuted": "#BDB7C8", "border": "#5B5A68", "input": "#50505D", "focus": "#D3ADD9", "accent": "#D3ADD9", "accentForeground": "#302D38", "secondary": "#454550", "secondaryForeground": "#E9E4EE", "muted": "#3C3C48", "mutedForeground": "#BDB7C8", "placeholder": "#BDB7C8", "secondaryLabel": "#BDB7C8", "iconMuted": "#BDB7C8", "error": "#E59A95", "errorForeground": "#F0B2AC", "errorSurface": "#583C42", "warning": "#E0C17C", "warningForeground": "#EAD096", "warningSurface": "#494252", "update": "#B8ACD7", "updateForeground": "#D3CAEC", "updateSurface": "#423B4A", "accentSurface": "#57475D", "accentSurfaceForeground": "#E9E4EE", "messageSurface": "#454550", "messageForeground": "#E9E4EE", "messageAction": "#D3ADD9", "messageActionForeground": "#302D38", "messageActionHover": "#E3C2E8", "codeBackground": "#353540", "codeForeground": "#E9E4EE", "sidebar": "#30313B", "sidebarForeground": "#E9E4EE", "sidebarMutedForeground": "#BDB7C8", "sidebarControlSurface": "#3C3C48", "sidebarRowHover": "#454550", "sidebarRowActive": "#50505D", "sidebarRowSelected": "#57475D", "sidebarBorder": "#5B5A68", "terminalBackground": "#30313B", "terminalForeground": "#E9E4EE", "terminalCursor": "#D3ADD9", "terminalSelection": "#50505D", "terminalScrollbar": "#5B5A68", "terminalScrollbarHover": "#50505D"}, "collection": {"id": "maple-theme-collection", "label": "Maple Theme Collection"}, "origin": "ChatGPT"}, "maple-frost": {"version": 1, "id": "maple-frost", "name": "Maple Frost", "appearance": "dark", "author": "Custom", "description": "Cool frosted blue-grey with a red maple-leaf accent: first frost on autumn leaves.", "colors": {"canvas": "#2B323B", "chrome": "#2B323B", "toolbar": "#2B323B", "toolbarForeground": "#E4EAF1", "toolbarBorder": "#474F58", "toolbarControl": "#353D45", "toolbarControlForeground": "#E4EAF1", "toolbarControlHover": "#3B434C", "surface": "#2F373F", "surfaceRaised": "#353D45", "surfaceOverlay": "#3B434C", "text": "#E4EAF1", "textMuted": "#B6BFC8", "border": "#474F58", "input": "#3E464F", "focus": "#F19485", "accent": "#F19485", "accentForeground": "#1A232C", "secondary": "#353D45", "secondaryForeground": "#E4EAF1", "muted": "#2F373F", "mutedForeground": "#B6BFC8", "placeholder": "#9DA6AF", "secondaryLabel": "#B6BFC8", "iconMuted": "#AAB2BB", "error": "#EB9287", "errorForeground": "#FDB1A7", "errorSurface": "#543935", "warning": "#EEB97B", "warningForeground": "#FECE96", "warningSurface": "#4D3E2D", "update": "#C4A6DB", "updateForeground": "#DDC7EF", "updateSurface": "#473C4F", "accentSurface": "#5A3E3A", "accentSurfaceForeground": "#FFD1C8", "messageSurface": "#353D45", "messageForeground": "#E4EAF1", "messageAction": "#F19485", "messageActionForeground": "#1A232C", "messageActionHover": "#FDAC9F", "codeBackground": "#2B323B", "codeForeground": "#E4EAF1", "sidebar": "#262D35", "sidebarForeground": "#E4EAF1", "sidebarMutedForeground": "#B6BFC8", "sidebarControlSurface": "#2F373F", "sidebarRowHover": "#323A42", "sidebarRowActive": "#394149", "sidebarRowSelected": "#553D39", "sidebarBorder": "#424A53", "terminalBackground": "#272F37", "terminalForeground": "#E4EAF1", "terminalCursor": "#FC9E8E", "terminalSelection": "#3F4750", "terminalScrollbar": "#474F58", "terminalScrollbarHover": "#555D66"}, "collection": {"id": "maple-theme-collection", "label": "Maple Theme Collection"}, "origin": "New"}, "maple-dusk": {"version": 1, "id": "maple-dusk", "name": "Maple Dusk", "appearance": "dark", "author": "Custom", "description": "Smoky plum-slate with glowing apricot: autumn leaves at sunset.", "colors": {"canvas": "#332F3A", "chrome": "#332F3A", "toolbar": "#332F3A", "toolbarForeground": "#EAE8F1", "toolbarBorder": "#504C58", "toolbarControl": "#3D3A45", "toolbarControlForeground": "#EAE8F1", "toolbarControlHover": "#44404C", "surface": "#38343F", "surfaceRaised": "#3D3A45", "surfaceOverlay": "#44404C", "text": "#EAE8F1", "textMuted": "#BFBBC8", "border": "#504C58", "input": "#46434E", "focus": "#F0AE77", "accent": "#F0AE77", "accentForeground": "#231F2C", "secondary": "#3D3A45", "secondaryForeground": "#EAE8F1", "muted": "#38343F", "mutedForeground": "#BFBBC8", "placeholder": "#A6A2AE", "secondaryLabel": "#BFBBC8", "iconMuted": "#B3AFBB", "error": "#E99578", "errorForeground": "#FBB49B", "errorSurface": "#543A31", "warning": "#ECBA7A", "warningForeground": "#FDCF95", "warningSurface": "#4D3E2C", "update": "#C4A6DB", "updateForeground": "#DDC7EF", "updateSurface": "#473C4F", "accentSurface": "#554232", "accentSurfaceForeground": "#F9D7BC", "messageSurface": "#3D3A45", "messageForeground": "#EAE8F1", "messageAction": "#F0AE77", "messageActionForeground": "#231F2C", "messageActionHover": "#FDC496", "codeBackground": "#332F3A", "codeForeground": "#EAE8F1", "sidebar": "#2E2A35", "sidebarForeground": "#EAE8F1", "sidebarMutedForeground": "#BFBBC8", "sidebarControlSurface": "#38343F", "sidebarRowHover": "#3B3742", "sidebarRowActive": "#413D49", "sidebarRowSelected": "#514033", "sidebarBorder": "#4A4752", "terminalBackground": "#2F2C37", "terminalForeground": "#EAE8F1", "terminalCursor": "#FAB780", "terminalSelection": "#484450", "terminalScrollbar": "#504C58", "terminalScrollbarHover": "#5E5A66"}, "collection": {"id": "maple-theme-collection", "label": "Maple Theme Collection"}, "origin": "New"}, "maple-momiji": {"version": 1, "id": "maple-momiji", "name": "Maple Momiji", "appearance": "dark", "author": "Custom", "description": "Neutral ink-grey with Japanese-maple vermilion and a whisper of warmth.", "colors": {"canvas": "#312E2C", "chrome": "#312E2C", "toolbar": "#312E2C", "toolbarForeground": "#EBE9E7", "toolbarBorder": "#4E4B48", "toolbarControl": "#3C3936", "toolbarControlForeground": "#EBE9E7", "toolbarControlHover": "#423F3D", "surface": "#363331", "surfaceRaised": "#3C3936", "surfaceOverlay": "#423F3D", "text": "#EBE9E7", "textMuted": "#C0BDBA", "border": "#4E4B48", "input": "#45423F", "focus": "#F18B71", "accent": "#F18B71", "accentForeground": "#24211E", "secondary": "#3C3936", "secondaryForeground": "#EBE9E7", "muted": "#363331", "mutedForeground": "#C0BDBA", "placeholder": "#A7A4A1", "secondaryLabel": "#C0BDBA", "iconMuted": "#B4B0AE", "error": "#EB9384", "errorForeground": "#FCB2A5", "errorSurface": "#523732", "warning": "#EEB97B", "warningForeground": "#FECE96", "warningSurface": "#4A3B2A", "update": "#C4A6DB", "updateForeground": "#DDC7EF", "updateSurface": "#44394C", "accentSurface": "#593B33", "accentSurfaceForeground": "#FFCFC1", "messageSurface": "#3C3936", "messageForeground": "#EBE9E7", "messageAction": "#F18B71", "messageActionForeground": "#24211E", "messageActionHover": "#FCA48D", "codeBackground": "#312E2C", "codeForeground": "#EBE9E7", "sidebar": "#2C2927", "sidebarForeground": "#EBE9E7", "sidebarMutedForeground": "#C0BDBA", "sidebarControlSurface": "#363331", "sidebarRowHover": "#393634", "sidebarRowActive": "#403C3A", "sidebarRowSelected": "#543A33", "sidebarBorder": "#494643", "terminalBackground": "#2E2B28", "terminalForeground": "#EBE9E7", "terminalCursor": "#FB947B", "terminalSelection": "#464340", "terminalScrollbar": "#4E4B48", "terminalScrollbarHover": "#5C5956"}, "collection": {"id": "maple-theme-collection", "label": "Maple Theme Collection"}, "origin": "New"}, "maple-sugar": {"version": 1, "id": "maple-sugar", "name": "Maple Sugar", "appearance": "dark", "author": "Custom", "description": "Cool slate with sugar-maple gold, complementary blue and amber without the brown.", "colors": {"canvas": "#2A3339", "chrome": "#2A3339", "toolbar": "#2A3339", "toolbarForeground": "#E4EBEF", "toolbarBorder": "#465056", "toolbarControl": "#343D43", "toolbarControlForeground": "#E4EBEF", "toolbarControlHover": "#3A444A", "surface": "#2E383D", "surfaceRaised": "#343D43", "surfaceOverlay": "#3A444A", "text": "#E4EBEF", "textMuted": "#B5BFC6", "border": "#465056", "input": "#3D474C", "focus": "#F1BD73", "accent": "#F1BD73", "accentForeground": "#19232A", "secondary": "#343D43", "secondaryForeground": "#E4EBEF", "muted": "#2E383D", "mutedForeground": "#B5BFC6", "placeholder": "#9CA6AC", "secondaryLabel": "#B5BFC6", "iconMuted": "#A9B3B9", "error": "#E99578", "errorForeground": "#FBB49B", "errorSurface": "#543A31", "warning": "#E6BD77", "warningForeground": "#F7D293", "warningSurface": "#4B3F2C", "update": "#C4A6DB", "updateForeground": "#DDC7EF", "updateSurface": "#473C4F", "accentSurface": "#53442F", "accentSurfaceForeground": "#F4DAB6", "messageSurface": "#343D43", "messageForeground": "#E4EBEF", "messageAction": "#F1BD73", "messageActionForeground": "#19232A", "messageActionHover": "#FFD294", "codeBackground": "#2A3339", "codeForeground": "#E4EBEF", "sidebar": "#252E34", "sidebarForeground": "#E4EBEF", "sidebarMutedForeground": "#B5BFC6", "sidebarControlSurface": "#2E383D", "sidebarRowHover": "#313B40", "sidebarRowActive": "#384147", "sidebarRowSelected": "#4E4130", "sidebarBorder": "#414B51", "terminalBackground": "#262F35", "terminalForeground": "#E4EBEF", "terminalCursor": "#FBC77C", "terminalSelection": "#3E484E", "terminalScrollbar": "#465056", "terminalScrollbarHover": "#545E64"}, "collection": {"id": "maple-theme-collection", "label": "Maple Theme Collection"}, "origin": "New"}};</script>
+<script>
+const lum=h=>{const c=[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)/255).map(v=>v<=.04045?v/12.92:((v+.055)/1.055)**2.4);return .2126*c[0]+.7152*c[1]+.0722*c[2]};
+const cr=(a,b)=>{const x=lum(a),y=lum(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
+const SX=[["Keyword","--sx-kw"],["Function","--sx-fn"],["Variable","--sx-var"],["Type","--sx-type"],["String","--sx-str"],["Comment","--sx-cmt"],["Link (terminal)","--sx-cyan"],["Blue (terminal)","--sx-blue"]];
+const css=getComputedStyle(document.documentElement);
+const picker=document.getElementById('picker'),win=document.getElementById('win');
+const ids=Object.keys(THEMES);
+ids.forEach(id=>{const t=THEMES[id],c=t.colors;const b=document.createElement('button');b.className='pick';b.type='button';b.dataset.id=id;b.style.setProperty('--sel',c.accent);
+b.innerHTML=`<div class="row"><b>${t.name.replace('Maple ','')}</b><span class="tag ${t.origin==='New'?'new':''}">${t.origin}</span></div><div class="strip"><span style="background:${c.sidebar}"></span><span style="background:${c.canvas}"></span><span style="background:${c.surfaceRaised}"></span><span style="background:${c.border}"></span><span class="acc" style="background:${c.accent}"></span><span style="background:${c.accentSurface}"></span><span style="background:${c.text}"></span></div>`;
+b.onclick=()=>apply(id);picker.appendChild(b)});
+function cls(r,min){return r>=min?'ok':r>=min*.75?'meh':'bad'}
+function apply(id){const t=THEMES[id],c=t.colors;for(const k in c)win.style.setProperty('--t-'+k,c[k]);
+document.querySelectorAll('.pick').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===id));
+document.getElementById('tname').textContent=t.name;document.getElementById('tdesc').textContent=t.description;
+const bg=c.codeBackground;let rows=`<tr><th>Element</th><th>Colour</th><th>Ratio</th></tr>`;
+const ui=[["Text on canvas",c.text,c.canvas,7],["Muted text",c.textMuted,c.canvas,4.5],["Button label on accent",c.accentForeground,c.accent,4.5],["Accent on canvas",c.accent,c.canvas,3]];
+SX.forEach(([n,v])=>{const col=css.getPropertyValue(v).trim();const r=cr(col,bg);rows+=`<tr><td>${n}</td><td><span class="sw" style="background:${col}"></span>${col}</td><td class="${cls(r,n==='Comment'?3:4.5)}">${r.toFixed(1)}</td></tr>`});
+ui.forEach(([n,a,b2,m])=>{const r=cr(a,b2);rows+=`<tr><td>${n}</td><td><span class="sw" style="background:${a}"></span>${a}</td><td class="${cls(r,m)}">${r.toFixed(1)}</td></tr>`});
+document.getElementById('ctab').innerHTML=rows;
+const out={...t};delete out.origin;document.getElementById('json').value=JSON.stringify(out,null,2);
+try{localStorage.setItem('maple-pick',id)}catch(e){}}
+document.getElementById('copy').onclick=async e=>{const ta=document.getElementById('json');try{await navigator.clipboard.writeText(ta.value);e.target.textContent='Copied'}catch(_){ta.select();e.target.textContent='Selected, press Ctrl+C'}setTimeout(()=>e.target.textContent='Copy JSON',1600)};
+let start='maple-frost';try{const s=localStorage.getItem('maple-pick');if(s&&THEMES[s])start=s}catch(e){}
+apply(start);
+</script>
+
+</body>
+</html>
