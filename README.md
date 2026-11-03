@@ -20,7 +20,7 @@ Import any file from [`themes/`](themes) into t3code's theme settings. Each file
 
 ## Preview
 
-Open [`preview/index.html`](preview/index.html) in a browser to click through every theme in a mock t3code window, with contrast ratios for the fixed syntax colours.
+[Open the live preview](https://mikedoesstuff.github.io/Mapleszn-Themes/) to click through every theme in a mock t3code window, with contrast ratios for the fixed syntax colours.
 
 ## Design notes
 
