@@ -1,6 +1,6 @@
-# Maple Themes for t3code
+# Mapleszn
 
-Dark and light themes for [t3code](https://github.com/pingdotgg/t3code), built around muted maple-leaf accents on grey bases that don't turn brown. They pair well with the Maple Mono font.
+Dark and light maple-season themes for [t3code](https://github.com/pingdotgg/t3code), built around muted maple-leaf accents on grey bases that don't turn brown. They pair well with the Maple Mono font.
 
 | Theme | Made by | Dark background | Dark accent | Description |
 |---|---|---|---|---|
